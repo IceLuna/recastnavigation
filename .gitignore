@@ -8,6 +8,7 @@
 *.pdb
 *.so
 *.idb
+*.vcxproj*
 
 ## Linux exes have no extension
 RecastDemo/Bin/RecastDemo
@@ -15,6 +16,8 @@ RecastDemo/Bin/Tests
 
 # Build directory
 RecastDemo/Build
+bin/
+bin-int/
 
 # XCode debug symbols archive
 RecastDemo/Bin/*.dSYM
