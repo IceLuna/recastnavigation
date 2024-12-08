@@ -38,8 +38,6 @@ project "DebugUtils"
 
 	-- windows specific
 	filter "system:windows"
-		platforms { "Win32", "Win64" }
-		defines { "WIN32", "_WINDOWS", "_CRT_SECURE_NO_WARNINGS", "_HAS_EXCEPTIONS=0" }
 		-- warnings "Extra" uses /W4 which is too aggressive for us, so use W3 instead.
 		-- Disable:
 		-- * C4351: new behavior for array initialization
@@ -88,8 +86,6 @@ project "Detour"
 
 	-- windows specific
 	filter "system:windows"
-		platforms { "Win32", "Win64" }
-		defines { "WIN32", "_WINDOWS", "_CRT_SECURE_NO_WARNINGS", "_HAS_EXCEPTIONS=0" }
 		-- warnings "Extra" uses /W4 which is too aggressive for us, so use W3 instead.
 		-- Disable:
 		-- * C4351: new behavior for array initialization
@@ -134,8 +130,6 @@ project "DetourCrowd"
 
 	-- windows specific
 	filter "system:windows"
-		platforms { "Win32", "Win64" }
-		defines { "WIN32", "_WINDOWS", "_CRT_SECURE_NO_WARNINGS", "_HAS_EXCEPTIONS=0" }
 		-- warnings "Extra" uses /W4 which is too aggressive for us, so use W3 instead.
 		-- Disable:
 		-- * C4351: new behavior for array initialization
@@ -180,8 +174,6 @@ project "DetourTileCache"
 
 	-- windows specific
 	filter "system:windows"
-		platforms { "Win32", "Win64" }
-		defines { "WIN32", "_WINDOWS", "_CRT_SECURE_NO_WARNINGS", "_HAS_EXCEPTIONS=0" }
 		-- warnings "Extra" uses /W4 which is too aggressive for us, so use W3 instead.
 		-- Disable:
 		-- * C4351: new behavior for array initialization
@@ -224,8 +216,6 @@ project "Recast"
 
 	-- windows specific
 	filter "system:windows"
-		platforms { "Win32", "Win64" }
-		defines { "WIN32", "_WINDOWS", "_CRT_SECURE_NO_WARNINGS", "_HAS_EXCEPTIONS=0" }
 		-- warnings "Extra" uses /W4 which is too aggressive for us, so use W3 instead.
 		-- Disable:
 		-- * C4351: new behavior for array initialization

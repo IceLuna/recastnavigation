@@ -2,6 +2,7 @@
 #define DETOURTILECACHE_H
 
 #include "DetourStatus.h"
+#include <vector>
 
 typedef unsigned int dtObstacleRef;
 typedef unsigned int dtCompressedTileRef;
@@ -241,12 +242,10 @@ private:
 	dtTileCacheObstacle* m_obstacles;
 	dtTileCacheObstacle* m_nextFreeObstacle;
 	
-	static const int MAX_REQUESTS = 64;
-	ObstacleRequest m_reqs[MAX_REQUESTS];
+	std::vector<ObstacleRequest> m_reqs;
 	int m_nreqs;
 	
-	static const int MAX_UPDATE = 64;
-	dtCompressedTileRef m_update[MAX_UPDATE];
+	std::vector<dtCompressedTileRef> m_update;
 	int m_nupdate;
 };
 
