@@ -77,7 +77,6 @@ dtTileCache::dtTileCache() :
 	m_nupdate(0)
 {
 	memset(&m_params, 0, sizeof(m_params));
-	memset(m_reqs, 0, sizeof(ObstacleRequest) * MAX_REQUESTS);
 }
 	
 dtTileCache::~dtTileCache()
@@ -125,6 +124,19 @@ dtStatus dtTileCache::init(const dtTileCacheParams* params,
 	m_tmproc = tmproc;
 	m_nreqs = 0;
 	memcpy(&m_params, params, sizeof(m_params));
+
+	{
+		const size_t maxRequests = size_t(m_params.maxObstacles) * 2ull;
+		m_reqs.resize(maxRequests);
+		m_update.resize(maxRequests);
+
+		for (size_t i = 0; i < maxRequests; ++i)
+		{
+			m_reqs[i].action = 0;
+			m_reqs[i].ref = 0;
+			m_update[i] = 0u;
+		}
+	}
 	
 	// Alloc space for obstacles.
 	m_obstacles = (dtTileCacheObstacle*)dtAlloc(sizeof(dtTileCacheObstacle)*m_params.maxObstacles, DT_ALLOC_PERM);
@@ -358,7 +370,7 @@ dtStatus dtTileCache::removeTile(dtCompressedTileRef ref, unsigned char** data, 
 
 dtStatus dtTileCache::addObstacle(const float* pos, const float radius, const float height, dtObstacleRef* result)
 {
-	if (m_nreqs >= MAX_REQUESTS)
+	if (m_nreqs >= (int)m_reqs.size())
 		return DT_FAILURE | DT_BUFFER_TOO_SMALL;
 	
 	dtTileCacheObstacle* ob = 0;
@@ -393,7 +405,7 @@ dtStatus dtTileCache::addObstacle(const float* pos, const float radius, const fl
 
 dtStatus dtTileCache::addBoxObstacle(const float* bmin, const float* bmax, dtObstacleRef* result)
 {
-	if (m_nreqs >= MAX_REQUESTS)
+	if (m_nreqs >= (int)m_reqs.size())
 		return DT_FAILURE | DT_BUFFER_TOO_SMALL;
 	
 	dtTileCacheObstacle* ob = 0;
@@ -427,7 +439,7 @@ dtStatus dtTileCache::addBoxObstacle(const float* bmin, const float* bmax, dtObs
 
 dtStatus dtTileCache::addBoxObstacle(const float* center, const float* halfExtents, const float yRadians, dtObstacleRef* result)
 {
-	if (m_nreqs >= MAX_REQUESTS)
+	if (m_nreqs >= (int)m_reqs.size())
 		return DT_FAILURE | DT_BUFFER_TOO_SMALL;
 
 	dtTileCacheObstacle* ob = 0;
@@ -468,7 +480,7 @@ dtStatus dtTileCache::removeObstacle(const dtObstacleRef ref)
 {
 	if (!ref)
 		return DT_SUCCESS;
-	if (m_nreqs >= MAX_REQUESTS)
+	if (m_nreqs >= (int)m_reqs.size())
 		return DT_FAILURE | DT_BUFFER_TOO_SMALL;
 	
 	ObstacleRequest* req = &m_reqs[m_nreqs++];
@@ -551,9 +563,9 @@ dtStatus dtTileCache::update(const float /*dt*/, dtNavMesh* navmesh,
 				ob->npending = 0;
 				for (int j = 0; j < ob->ntouched; ++j)
 				{
-					if (m_nupdate < MAX_UPDATE)
+					if (m_nupdate < (int)m_update.size())
 					{
-						if (!contains(m_update, m_nupdate, ob->touched[j]))
+						if (!contains(m_update.data(), m_nupdate, ob->touched[j]))
 							m_update[m_nupdate++] = ob->touched[j];
 						ob->pending[ob->npending++] = ob->touched[j];
 					}
@@ -565,13 +577,20 @@ dtStatus dtTileCache::update(const float /*dt*/, dtNavMesh* navmesh,
 				ob->state = DT_OBSTACLE_REMOVING;
 				// Add tiles to update list.
 				ob->npending = 0;
-				for (int j = 0; j < ob->ntouched; ++j)
+				if (ob->ntouched == 0)
 				{
-					if (m_nupdate < MAX_UPDATE)
+					m_nupdate++;
+				}
+				else
+				{
+					for (int j = 0; j < ob->ntouched; ++j)
 					{
-						if (!contains(m_update, m_nupdate, ob->touched[j]))
-							m_update[m_nupdate++] = ob->touched[j];
-						ob->pending[ob->npending++] = ob->touched[j];
+						if (m_nupdate < (int)m_update.size())
+						{
+							if (!contains(m_update.data(), m_nupdate, ob->touched[j]))
+								m_update[m_nupdate++] = ob->touched[j];
+							ob->pending[ob->npending++] = ob->touched[j];
+						}
 					}
 				}
 			}
@@ -589,7 +608,7 @@ dtStatus dtTileCache::update(const float /*dt*/, dtNavMesh* navmesh,
 		status = buildNavMeshTile(ref, navmesh);
 		m_nupdate--;
 		if (m_nupdate > 0)
-			memmove(m_update, m_update+1, m_nupdate*sizeof(dtCompressedTileRef));
+			memmove(m_update.data(), m_update.data() + 1, m_nupdate * sizeof(dtCompressedTileRef));
 
 		// Update obstacle states.
 		for (int i = 0; i < m_params.maxObstacles; ++i)
