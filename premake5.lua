@@ -26,12 +26,12 @@ project "DebugUtils"
 		runtime "Debug"
 		symbols "on"
 
-	filter "configurations:Release"
+	filter "configurations:ReleaseWithDebug"
 		defines { "RC_DISABLE_ASSERTS" }
 		runtime "Release"
 		optimize "Speed"
 
-	filter "configurations:Dist"
+	filter "configurations:Release"
 		defines { "RC_DISABLE_ASSERTS" }
 		runtime "Release"
 		optimize "Speed"
@@ -74,12 +74,12 @@ project "Detour"
 		runtime "Debug"
 		symbols "on"
 
-	filter "configurations:Release"
+	filter "configurations:ReleaseWithDebug"
 		defines { "RC_DISABLE_ASSERTS" }
 		runtime "Release"
 		optimize "Speed"
 
-	filter "configurations:Dist"
+	filter "configurations:Release"
 		defines { "RC_DISABLE_ASSERTS" }
 		runtime "Release"
 		optimize "Speed"
@@ -118,12 +118,12 @@ project "DetourCrowd"
 		runtime "Debug"
 		symbols "on"
 
-	filter "configurations:Release"
+	filter "configurations:ReleaseWithDebug"
 		defines { "RC_DISABLE_ASSERTS" }
 		runtime "Release"
 		optimize "Speed"
 
-	filter "configurations:Dist"
+	filter "configurations:Release"
 		defines { "RC_DISABLE_ASSERTS" }
 		runtime "Release"
 		optimize "Speed"
@@ -162,12 +162,12 @@ project "DetourTileCache"
 		runtime "Debug"
 		symbols "on"
 
-	filter "configurations:Release"
+	filter "configurations:ReleaseWithDebug"
 		defines { "RC_DISABLE_ASSERTS" }
 		runtime "Release"
 		optimize "Speed"
 
-	filter "configurations:Dist"
+	filter "configurations:Release"
 		defines { "RC_DISABLE_ASSERTS" }
 		runtime "Release"
 		optimize "Speed"
@@ -204,12 +204,12 @@ project "Recast"
 		runtime "Debug"
 		symbols "on"
 
-	filter "configurations:Release"
+	filter "configurations:ReleaseWithDebug"
 		defines { "RC_DISABLE_ASSERTS" }
 		runtime "Release"
 		optimize "Speed"
 
-	filter "configurations:Dist"
+	filter "configurations:Release"
 		defines { "RC_DISABLE_ASSERTS" }
 		runtime "Release"
 		optimize "Speed"
