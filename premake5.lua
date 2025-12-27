@@ -6,7 +6,6 @@ project "DebugUtils"
 	exceptionhandling "Off"
 	rtti "Off"
 	symbols "On"
-	flags { "FatalCompileWarnings" }
 	cppdialect "C++98"
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -51,7 +50,6 @@ project "Detour"
 	exceptionhandling "Off"
 	rtti "Off"
 	symbols "On"
-	flags { "FatalCompileWarnings" }
 	cppdialect "C++98"
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -99,7 +97,6 @@ project "DetourCrowd"
 	exceptionhandling "Off"
 	rtti "Off"
 	symbols "On"
-	flags { "FatalCompileWarnings" }
 	cppdialect "C++98"
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -143,7 +140,6 @@ project "DetourTileCache"
 	exceptionhandling "Off"
 	rtti "Off"
 	symbols "On"
-	flags { "FatalCompileWarnings" }
 	cppdialect "C++98"
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -187,7 +183,6 @@ project "Recast"
 	exceptionhandling "Off"
 	rtti "Off"
 	symbols "On"
-	flags { "FatalCompileWarnings" }
 	cppdialect "C++98"
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
