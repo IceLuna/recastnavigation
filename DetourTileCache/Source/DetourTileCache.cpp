@@ -579,7 +579,16 @@ dtStatus dtTileCache::update(const float /*dt*/, dtNavMesh* navmesh,
 				ob->npending = 0;
 				if (ob->ntouched == 0)
 				{
-					m_nupdate++;
+					// No tiles to rebuild, so release the obstacle right away.
+					// (Counting a fake update here wasn't bounds checked and overflowed `m_update`.)
+					ob->state = DT_OBSTACLE_EMPTY;
+					// Update salt, salt should never be zero.
+					ob->salt = (ob->salt+1) & ((1<<16)-1);
+					if (ob->salt == 0)
+						ob->salt++;
+					// Return obstacle to free list.
+					ob->next = m_nextFreeObstacle;
+					m_nextFreeObstacle = ob;
 				}
 				else
 				{

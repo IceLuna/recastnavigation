@@ -108,6 +108,12 @@ public:
 	struct dtTileCacheAlloc* getAlloc() { return m_talloc; }
 	struct dtTileCacheCompressor* getCompressor() { return m_tcomp; }
 	const dtTileCacheParams* getParams() const { return &m_params; }
+
+	// Obstacle requests that can be queued between updates.
+	inline int getMaxRequests() const { return (int)m_reqs.size(); }
+	
+	// Tiles that one batch of obstacle requests can rebuild
+	inline int getMaxTileUpdates() const { return (int)m_update.size(); }
 	
 	inline int getTileCount() const { return m_params.maxTiles; }
 	inline const dtCompressedTile* getTile(const int i) const { return &m_tiles[i]; }
