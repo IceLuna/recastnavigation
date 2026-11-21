@@ -107,6 +107,51 @@ int dtMergeCorridorEndMoved(dtPolyRef* path, const int npath, const int maxPath,
 	return ppos+count;
 }
 
+// The highest area cost of the polygons.
+static float dtGetMaxAreaCost(const dtPolyRef* polys, const int npolys, const dtNavMesh* nav, const dtQueryFilter* filter)
+{
+	float maxCost = 0.0f;
+	for (int i = 0; i < npolys; ++i)
+	{
+		unsigned char area = 0;
+		if (dtStatusSucceed(nav->getPolyArea(polys[i], &area)))
+			maxCost = dtMax(maxCost, filter->getAreaCost(area));
+	}
+	return maxCost;
+}
+
+// Returns false if the shortcut (@p visited) goes through areas that cost more than the part of @p path it replaces.
+// The parts are found the same way dtMergeCorridorStartShortcut() finds them.
+static bool dtShortcutRespectsAreaCosts(const dtPolyRef* path, const int npath, const dtPolyRef* visited, const int nvisited,
+										const dtNavMesh* nav, const dtQueryFilter* filter)
+{
+	int furthestPath = -1;
+	int furthestVisited = -1;
+	
+	// Find furthest common polygon.
+	for (int i = npath-1; i >= 0; --i)
+	{
+		bool found = false;
+		for (int j = nvisited-1; j >= 0; --j)
+		{
+			if (path[i] == visited[j])
+			{
+				furthestPath = i;
+				furthestVisited = j;
+				found = true;
+			}
+		}
+		if (found)
+			break;
+	}
+	
+	// The path wouldn't change
+	if (furthestPath == -1 || furthestVisited <= 0)
+		return true;
+	
+	return dtGetMaxAreaCost(visited, furthestVisited+1, nav, filter) <= dtGetMaxAreaCost(path, furthestPath+1, nav, filter);
+}
+
 int dtMergeCorridorStartShortcut(dtPolyRef* path, const int npath, const int maxPath,
 								 const dtPolyRef* visited, const int nvisited)
 {
@@ -300,7 +345,9 @@ This function uses an efficient local visibility search to try to optimize the c
 between the current position and @p next.
 
 The corridor will change only if @p next is visible from the current position and moving directly toward the point 
-is better than following the existing path.
+is better than following the existing path. The ray ignores area costs, so the shortcut is only taken if it doesn't go
+through areas that cost more than the part of the path it replaces (otherwise agents would cut across expensive areas
+that their path goes around).
 
 The more inaccurate the agent movement, the more beneficial this function becomes. Simply adjust the frequency 
 of the call to match the needs to the agent.
@@ -336,6 +383,9 @@ void dtPathCorridor::optimizePathVisibility(const float* next, const float pathO
 	navquery->raycast(m_path[0], m_pos, goal, filter, &t, norm, res, &nres, MAX_RES);
 	if (nres > 1 && t > 0.99f)
 	{
+		if (!dtShortcutRespectsAreaCosts(m_path, m_npath, res, nres, navquery->getAttachedNavMesh(), filter))
+			return;
+		
 		m_npath = dtMergeCorridorStartShortcut(m_path, m_npath, m_maxPath, res, nres);
 	}
 }
